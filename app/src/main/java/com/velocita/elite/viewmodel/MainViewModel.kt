@@ -46,9 +46,9 @@ data class BookingState(
 
 class MainViewModel : ViewModel() {
 
-    private val emailRegex   = Regex("^[A-Za-z0-9+_.-]+@gmail\\.com$")
-    private val passwordRegex = Regex("^(?=.*[A-Za-z])(?=.*\\d).{8,}\$")
-    private val phoneRegex   = Regex("^\\+?[0-9]{7,15}\$")
+    private val emailRegex   = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
+    private val passwordRegex = Regex("^(?=.*[A-Za-z])(?=.*\\d).{8,}$")
+    private val phoneRegex   = Regex("^\\+?[0-9]{7,15}$")
 
     // --- User Profile State ---
     var currentUser by mutableStateOf<UserProfile?>(null)
@@ -56,6 +56,31 @@ class MainViewModel : ViewModel() {
 
     fun setUserProfile(name: String, email: String) {
         currentUser = UserProfile(name = name, email = email)
+    }
+
+    // --- Enrollment Form State ---
+    var enrollName     by mutableStateOf(FieldState())
+    var enrollEmail    by mutableStateOf(FieldState())
+    var enrollPassword by mutableStateOf(FieldState())
+    var enrollPhone    by mutableStateOf(FieldState())
+
+    fun validateEnrollment(): Boolean {
+        var valid = true
+        enrollName = if (enrollName.value.length < 2) { valid = false; enrollName.copy(error = "Name too short") } else enrollName.copy(error = null)
+        enrollEmail = if (!emailRegex.matches(enrollEmail.value)) { valid = false; enrollEmail.copy(error = "Invalid email") } else enrollEmail.copy(error = null)
+        enrollPassword = if (!passwordRegex.matches(enrollPassword.value)) { valid = false; enrollPassword.copy(error = "Must contain letter and digit (min 8)") } else enrollPassword.copy(error = null)
+        return valid
+    }
+
+    // --- Login Form State ---
+    var loginEmail    by mutableStateOf(FieldState())
+    var loginPassword by mutableStateOf(FieldState())
+
+    fun validateLogin(): Boolean {
+        var valid = true
+        loginEmail = if (!emailRegex.matches(loginEmail.value)) { valid = false; loginEmail.copy(error = "Invalid email") } else loginEmail.copy(error = null)
+        loginPassword = if (loginPassword.value.length < 8) { valid = false; loginPassword.copy(error = "Min 8 chars") } else loginPassword.copy(error = null)
+        return valid
     }
 
     // --- Booking State ---

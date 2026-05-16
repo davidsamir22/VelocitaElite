@@ -1,26 +1,23 @@
 package com.velocita.elite.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,142 +26,235 @@ import com.velocita.elite.viewmodel.MainViewModel
 
 @Composable
 fun EnrollmentScreen(
-    viewModel: MainViewModel,
-    onEnrolled: () -> Unit,
-    onNavigateToLogin: () -> Unit
+    viewModel            : MainViewModel,
+    onEnrolled           : () -> Unit,
+    onNavigateToLogin    : () -> Unit
 ) {
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val focusManager = LocalFocusManager.current
+    var passwordVisible by remember { mutableStateOf(false) }
 
-    val isEmailValid = email.contains("@")
-    val isPasswordValid = password.length >= 8
+    Box(modifier = Modifier.fillMaxSize()) {
 
-    val nameError = remember(name) { name.isNotEmpty() && name.length < 2 }
-    val emailError = remember(email) { email.isNotEmpty() && !isEmailValid }
-    val passwordError = remember(password) { password.isNotEmpty() && !isPasswordValid }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(VelocitaColors.Obsidian)
-    ) {
-        Column(
+        // Background: Diagonal gradient mesh
+        Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(
+                    Brush.linearGradient(
+                        colorStops = arrayOf(
+                            0.0f to Color(0xFF0C0C10),
+                            0.4f to Color(0xFF131318),
+                            0.7f to Color(0xFF0E0E12),
+                            1.0f to Color(0xFF0A0A0C)
+                        )
+                    )
+                )
+        )
+
+        // Gold left-edge accent strip
+        Box(
+            modifier = Modifier
+                .width(3.dp)
+                .fillMaxHeight()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            Color.Transparent,
+                            VelocitaColors.GoldPrimary.copy(alpha = 0.7f),
+                            VelocitaColors.GoldPrimary.copy(alpha = 0.4f),
+                            Color.Transparent
+                        )
+                    )
+                )
+        )
+
+        // Faint diagonal lines
+        androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
+            val lineColor = VelocitaColors.CharcoalLight.copy(alpha = 0.25f)
+            var x = -size.height.toInt()
+            while (x < size.width.toInt() * 2) {
+                drawLine(
+                    color       = lineColor,
+                    start       = androidx.compose.ui.geometry.Offset(x.toFloat(), 0f),
+                    end         = androidx.compose.ui.geometry.Offset(
+                        x + size.height, size.height
+                    ),
+                    strokeWidth = 0.8f
+                )
+                x += 28
+            }
+        }
+
+        Column(
+            modifier            = Modifier
+                .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .padding(horizontal = 28.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            Spacer(modifier = Modifier.height(72.dp))
+
             Text(
-                text = "VELOCITÀ",
+                text  = "REQUEST",
                 style = MaterialTheme.typography.displayMedium.copy(
-                    color = VelocitaColors.GoldPrimary,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 8.sp
+                    color        = VelocitaColors.GoldPrimary,
+                    letterSpacing = 6.sp
                 )
             )
             Text(
-                text = "ENROLLMENT",
-                style = MaterialTheme.typography.labelLarge.copy(
-                    color = VelocitaColors.SilverMid,
-                    letterSpacing = 4.sp
+                text  = "ACCESS",
+                style = MaterialTheme.typography.displayMedium.copy(
+                    color        = VelocitaColors.SilverLight,
+                    letterSpacing = 6.sp
                 )
             )
 
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-            // Name Field
-            OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = { Text("FULL NAME") },
-                modifier = Modifier.fillMaxWidth(),
-                leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
-                isError = nameError,
-                singleLine = true,
-                colors = textFieldColors(nameError)
+            Text(
+                text      = "Join our exclusive clientele — private viewings\nand bespoke configuration await.",
+                style     = MaterialTheme.typography.bodyMedium.copy(
+                    color = VelocitaColors.SilverMid
+                ),
+                textAlign = TextAlign.Center,
+                lineHeight = 22.sp
             )
-            if (nameError) ErrorText("Name is too short")
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(40.dp))
 
-            // Email Field
-            OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
-                label = { Text("EMAIL") },
-                modifier = Modifier.fillMaxWidth(),
-                leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
-                isError = emailError,
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                colors = textFieldColors(emailError)
+            GoldDivider()
+
+            Spacer(modifier = Modifier.height(36.dp))
+
+            VelocitaTextField(
+                value        = viewModel.enrollName.value,
+                onValueChange = { viewModel.enrollName = viewModel.enrollName.copy(value = it, error = null) },
+                label        = "FULL NAME",
+                placeholder  = "e.g. Alessandro Ferrari",
+                errorText    = viewModel.enrollName.error,
+                leadingIcon  = {
+                    Icon(Icons.Default.Person, null, tint = VelocitaColors.GoldPrimary)
+                },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Text,
+                    capitalization = KeyboardCapitalization.Words
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                )
             )
-            if (emailError) ErrorText("Invalid email format (must contain @)")
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-            // Password Field
-            OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text("PASSWORD") },
-                modifier = Modifier.fillMaxWidth(),
-                leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
-                isError = passwordError,
-                singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
-                colors = textFieldColors(passwordError)
+            VelocitaTextField(
+                value         = viewModel.enrollEmail.value,
+                onValueChange = { viewModel.enrollEmail = viewModel.enrollEmail.copy(value = it, error = null) },
+                label         = "EMAIL ADDRESS",
+                placeholder   = "name@domain.com",
+                errorText     = viewModel.enrollEmail.error,
+                leadingIcon   = {
+                    Icon(Icons.Default.Email, null, tint = VelocitaColors.GoldPrimary)
+                },
+                keyboardOptions = KeyboardOptions(
+                    imeAction    = ImeAction.Next,
+                    keyboardType = KeyboardType.Email
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                )
             )
-            if (passwordError) ErrorText("Password must be at least 8 characters")
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(20.dp))
+
+            VelocitaTextField(
+                value         = viewModel.enrollPassword.value,
+                onValueChange = { viewModel.enrollPassword = viewModel.enrollPassword.copy(value = it, error = null) },
+                label         = "PASSWORD",
+                placeholder   = "Min 8 chars, include a letter & digit",
+                errorText     = viewModel.enrollPassword.error,
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                leadingIcon = {
+                    Icon(Icons.Default.Lock, null, tint = VelocitaColors.GoldPrimary)
+                },
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            imageVector = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                            contentDescription = null,
+                            tint = VelocitaColors.SilverMid
+                        )
+                    }
+                },
+                keyboardOptions = KeyboardOptions(
+                    imeAction    = ImeAction.Next,
+                    keyboardType = KeyboardType.Password
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                )
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            VelocitaTextField(
+                value         = viewModel.enrollPhone.value,
+                onValueChange = { viewModel.enrollPhone = viewModel.enrollPhone.copy(value = it, error = null) },
+                label         = "PHONE NUMBER",
+                placeholder   = "+44 7700 900000",
+                errorText     = viewModel.enrollPhone.error,
+                leadingIcon   = {
+                    Icon(Icons.Default.Phone, null, tint = VelocitaColors.GoldPrimary)
+                },
+                keyboardOptions = KeyboardOptions(
+                    imeAction    = ImeAction.Done,
+                    keyboardType = KeyboardType.Phone
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = { focusManager.clearFocus() }
+                )
+            )
+
+            Spacer(modifier = Modifier.height(40.dp))
 
             Button(
-                onClick = { if (isEmailValid && isPasswordValid && name.length >= 2) onEnrolled() },
+                onClick = {
+                    focusManager.clearFocus()
+                    if (viewModel.validateEnrollment()) {
+                        onEnrolled()
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = VelocitaColors.GoldPrimary,
-                    contentColor = VelocitaColors.Obsidian
+                    contentColor   = VelocitaColors.Obsidian
                 ),
-                enabled = isEmailValid && isPasswordValid && name.length >= 2
+                shape = RoundedCornerShape(4.dp)
             ) {
-                Text("REQUEST ACCESS", style = MaterialTheme.typography.labelLarge)
+                Text(
+                    text  = "REQUEST ACCESS",
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        letterSpacing = 3.sp
+                    )
+                )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             TextButton(onClick = onNavigateToLogin) {
                 Text(
-                    "ALREADY AN OWNER? SIGN IN",
-                    color = VelocitaColors.SilverMid,
-                    style = MaterialTheme.typography.labelMedium
+                    text  = "EXISTING OWNER?  SIGN IN",
+                    style = MaterialTheme.typography.labelMedium.copy(
+                        color        = VelocitaColors.SilverMid,
+                        letterSpacing = 1.5.sp
+                    )
                 )
             }
+
+            Spacer(modifier = Modifier.height(48.dp))
         }
     }
 }
-
-@Composable
-private fun ErrorText(text: String) {
-    Text(
-        text = text,
-        color = VelocitaColors.ErrorRed,
-        style = MaterialTheme.typography.labelSmall,
-        modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 4.dp)
-    )
-}
-
-@Composable
-private fun textFieldColors(isError: Boolean) = OutlinedTextFieldDefaults.colors(
-    focusedBorderColor = if (isError) VelocitaColors.ErrorRed else VelocitaColors.GoldPrimary,
-    unfocusedBorderColor = if (isError) VelocitaColors.ErrorRed else VelocitaColors.CharcoalLight,
-    focusedLabelColor = if (isError) VelocitaColors.ErrorRed else VelocitaColors.GoldPrimary,
-    cursorColor = VelocitaColors.GoldPrimary
-)
