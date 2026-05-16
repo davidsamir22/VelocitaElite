@@ -1,0 +1,8 @@
+com.velocita.elite.app-pngs-0 /Users/davidsalama/Downloads/VelocitaElite/app/build/generated/res/pngs/debug
+com.velocita.elite.app-resValues-1 /Users/davidsalama/Downloads/VelocitaElite/app/build/generated/res/resValues/debug
+com.velocita.elite.app-updated_navigation_xml-2 /Users/davidsalama/Downloads/VelocitaElite/app/build/generated/updated_navigation_xml/debug
+com.velocita.elite.app-packageDebugResources-3 /Users/davidsalama/Downloads/VelocitaElite/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir
+com.velocita.elite.app-packageDebugResources-4 /Users/davidsalama/Downloads/VelocitaElite/app/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
+com.velocita.elite.app-debug-5 /Users/davidsalama/Downloads/VelocitaElite/app/build/intermediates/merged_res/debug/mergeDebugResources
+com.velocita.elite.app-debug-6 /Users/davidsalama/Downloads/VelocitaElite/app/src/debug/res
+com.velocita.elite.app-main-7 /Users/davidsalama/Downloads/VelocitaElite/app/src/main/res

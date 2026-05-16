@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.velocita.elite.app-mergeDebugResources-54:/values-v30/values-v30.xml",
+            "map": [
+                {
+                    "source": "/Users/davidsalama/.gradle/caches/9.3.1/transforms/5bcc77ba6d4fd36b0a8d7404830f5c0c/transformed/jetified-material3-release/res/values-v30/values-v30.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "72",
+                        "endOffsets": "123"
+                    }
+                }
+            ]
+        }
+    ]
+}
